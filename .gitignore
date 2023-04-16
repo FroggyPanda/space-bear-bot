@@ -1,0 +1,8 @@
+# files
+.vscode
+.env
+pnpm-lock.yaml
+
+# folders
+build
+node_modules
