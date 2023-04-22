@@ -9,7 +9,7 @@
     "build:changelog": "npx @discordx/changelog --src src",
     "start": "node build/main.js",
     "dev": "nodemon --exec ts-node-esm src/main.ts",
-    "gen-types": "npx supabase gen types typescript --linked > ./src/schema.ts "
+    "gen-types": "npx supabase gen types typescript --linked --schema public > ./src/schema.ts "
   },
   "dependencies": {
     "@discordx/changelog": "^2.11.5",
@@ -33,3 +33,4 @@
     "typescript": "4.9.5"
   }
 }
+
