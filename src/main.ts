@@ -20,7 +20,7 @@ process.on('uncaughtException', (error) => {
     `${bot.user?.username} has experienced a bug\n \`\`\`${error}\`\`\``
   );
 
-  cache.keys().forEach(async (key) => {
+  cache.keys().forEach(async (key: string) => {
     const value = cache.get(key);
     const tableName = key.split(':')[0];
 
