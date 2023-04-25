@@ -117,3 +117,7 @@ export interface Database {
     }
   }
 }
+
+export type Member = Database['public']['Tables']['member']['Row'];
+export type Server = Database['public']['Tables']['server']['Row'];
+export type Warning = Database['public']['Tables']['warning']['Row'];
