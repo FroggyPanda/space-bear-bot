@@ -9,7 +9,7 @@
     "build:changelog": "npx @discordx/changelog --src src",
     "start": "node build/main.js",
     "dev": "nodemon --exec ts-node-esm src/main.ts",
-    "gen-types": "npx supabase gen types typescript --linked --schema public > ./src/schema.ts "
+    "gen-types": "npx supabase gen types typescript --linked --schema public > ./src/schema.ts && npx better-supabase-types -i ./src/schema.ts -f"
   },
   "dependencies": {
     "@discordx/changelog": "^2.11.5",
@@ -21,7 +21,8 @@
     "chalk": "^5.2.0",
     "discord.js": "^14.9.0",
     "discordx": "^11.7.4",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "node-cache": "^5.1.2"
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
@@ -32,4 +33,3 @@
     "typescript": "4.9.5"
   }
 }
-
