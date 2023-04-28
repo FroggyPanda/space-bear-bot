@@ -1,10 +1,10 @@
 import { Message, TextChannel } from 'discord.js';
 import type { ArgsOf } from 'discordx';
 import { Discord, On } from 'discordx';
-import { Member } from '../schema.js';
-import { getMember, getServer, setMember } from '../lib/cacheHelpers.js';
+import { getMember, getServer } from '../lib/supabaseHelpers.js';
+import { CacheMember, cache } from '../main.js';
 
-const setXpAndLevel = (member: Member) => {
+const setXpAndLevel = (member: CacheMember) => {
   let xp = member.xp + Math.floor(Math.random() * 6) + 15;
   let level = member.level;
   let up = false;
@@ -24,14 +24,28 @@ const Level = async (message: Message): Promise<void> => {
 
   const messageCreatedTimestamp = message.createdTimestamp;
 
-  const memberData = await getMember(message.guild.id, message.author.id);
+  let memberData = cache.get<CacheMember>(
+    `member:${message.guild.id}/${message.author.id}`
+  );
+
+  if (!memberData) {
+    const temp = await getMember(message.guild.id, message.author.id);
+    memberData = {
+      id: temp.id,
+      message: temp.message,
+      xp: temp.xp,
+      level: temp.level,
+      last_message_timestamp: temp.last_message_timestamp,
+    };
+  }
+
   if (!memberData) return;
   if (
     messageCreatedTimestamp <=
     memberData.last_message_timestamp + 2 * 60 * 1000
   ) {
     memberData.message++;
-    setMember(message.guild.id, message.author.id, memberData);
+    cache.set(`member:${message.guild.id}/${message.author.id}`, memberData);
     return;
   }
 
@@ -60,7 +74,7 @@ const Level = async (message: Message): Promise<void> => {
 
       if (message.member) {
         const role = server.level_ranks.find(
-          (v) => v.level === memberData.level
+          (v) => v.level === memberData?.level
         );
 
         if (role) {
@@ -70,7 +84,7 @@ const Level = async (message: Message): Promise<void> => {
     }
   }
 
-  setMember(message.guild.id, message.author.id, memberData);
+  cache.set(`member:${message.guild.id}/${message.author.id}`, memberData);
 };
 
 @Discord()
