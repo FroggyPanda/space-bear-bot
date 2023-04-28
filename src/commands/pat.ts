@@ -11,7 +11,7 @@ import {
   getServer,
   setMember,
   setServer,
-} from '../lib/cacheHelpers.js';
+} from '../lib/supabaseHelpers.js';
 import { Discord, Slash } from 'discordx';
 import { RedEmbed, YellowEmbed } from '../components/embeds.js';
 

@@ -1,7 +1,7 @@
 import { Message, TextChannel } from 'discord.js';
 import type { ArgsOf } from 'discordx';
 import { Discord, On } from 'discordx';
-import { getMember, getServer } from '../lib/cacheHelpers.js';
+import { getMember, getServer } from '../lib/supabaseHelpers.js';
 import { CacheMember, cache } from '../main.js';
 
 const setXpAndLevel = (member: CacheMember) => {
