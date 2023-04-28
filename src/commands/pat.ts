@@ -33,7 +33,9 @@ export class Pat {
       return null;
     }
 
-    const sorted = users.data.sort((a, b) => b.pat - a.pat);
+    const sorted = users.data
+      .sort((a, b) => b.pat - a.pat)
+      .filter((v) => v.pat > 0);
 
     const pages: {
       embeds: EmbedBuilder[];
