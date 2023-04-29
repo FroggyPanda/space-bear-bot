@@ -26,16 +26,15 @@ export class Pat {
     const users = await supabase
       .from('member')
       .select()
-      .eq('server_id', interaction.guild.id);
+      .eq('server_id', interaction.guild.id)
+      .gte('pat', 1);
 
     if (users.error) {
       console.error('pat.ts 38 users.error:\n', users.error);
       return null;
     }
 
-    const sorted = users.data
-      .sort((a, b) => b.pat - a.pat)
-      .filter((v) => v.pat > 0);
+    const sorted = users.data.sort((a, b) => b.pat - a.pat);
 
     const pages: {
       embeds: EmbedBuilder[];
