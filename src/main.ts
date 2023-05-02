@@ -19,6 +19,30 @@ export type CacheMember = {
   last_message_timestamp: number;
 };
 
+process.on('SIGINT', () => {
+  cache.keys().forEach(async (key: string) => {
+    const value = cache.get<CacheMember>(key);
+    const tableName = key.split(':')[0];
+
+    if (tableName === 'member') {
+      if (value) {
+        const result = await supabase
+          .from('member')
+          .update({
+            message: value.message,
+            xp: value.xp,
+            level: value.level,
+            last_message_timestamp: value.last_message_timestamp,
+          })
+          .eq('id', value.id);
+
+        if (result.error)
+          throw new Error(`Error updating Supabase from cache:\n${result}`);
+      }
+    }
+  });
+});
+
 process.on('uncaughtException', (error) => {
   console.error(error);
 
