@@ -68,8 +68,24 @@ const Level = async (message: Message): Promise<void> => {
       server.level_message_channel
     );
     if (channel) {
+      const levelMessages = [
+        'Congratulations',
+        'Woohoo',
+        'Awesome job',
+        'Great work',
+        'Keep it up',
+        'Way to go',
+        'Fantastic progress',
+        'Incredible effort',
+        'Amazing work',
+        'Unbelievable progress',
+      ];
+
+      const levelMessage =
+        levelMessages[Math.floor(Math.random() * levelMessages.length)];
+
       (channel as TextChannel).send(
-        `Someones chatty! <@${message.author.id}> is now level ${memberData.level}`
+        `${levelMessage}, <@${message.author.id}>! You've level up to level ${memberData.level}`
       );
 
       if (message.member) {
