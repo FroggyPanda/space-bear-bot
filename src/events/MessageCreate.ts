@@ -85,7 +85,7 @@ const Level = async (message: Message): Promise<void> => {
         levelMessages[Math.floor(Math.random() * levelMessages.length)];
 
       (channel as TextChannel).send(
-        `${levelMessage}, <@${message.author.id}>! You've level up to level ${memberData.level}`
+        `${levelMessage}, <@${message.author.id}>! You've leveled up to level ${memberData.level}`
       );
 
       if (message.member) {
