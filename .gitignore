@@ -2,6 +2,7 @@
 .vscode
 .env
 pnpm-lock.yaml
+*.log
 
 # folders
 build
