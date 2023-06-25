@@ -1,5 +1,4 @@
 import { dirname, importx } from '@discordx/importer';
-import { YTDLPlayerPlugin } from '@discordx/plugin-ytdl-player';
 import { createClient } from '@supabase/supabase-js';
 import { ActivityType, Interaction, Message } from 'discord.js';
 import { IntentsBitField } from 'discord.js';
@@ -111,10 +110,6 @@ cache.on('del', async (key: string, value: CacheMember) => {
   }
 });
 
-const ytdlPlayerPlugin = new YTDLPlayerPlugin({
-  metadata: MetadataStorage.instance,
-});
-
 export const bot = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
@@ -124,7 +119,6 @@ export const bot = new Client({
     IntentsBitField.Flags.GuildVoiceStates,
     IntentsBitField.Flags.MessageContent,
   ],
-  plugins: [ytdlPlayerPlugin],
   silent: false, // Debug logs are disabled in silent mode
   guards: [Log], // Default guard on each command
 });
