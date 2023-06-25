@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 import { Discord, Slash, SlashOption } from 'discordx';
 
-import { getGuild, userRoles, isMod, modLog } from '../lib/index.js';
+import { getGuild, userRoles, isMod, modLog, log } from '../lib/index.js';
 
 @Discord()
 export class Mute {
@@ -46,6 +46,11 @@ export class Mute {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -194,6 +199,11 @@ export class Mute {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
     const usersRoles = await userRoles(interaction);

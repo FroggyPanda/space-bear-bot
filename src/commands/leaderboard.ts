@@ -8,10 +8,11 @@ import {
   MessageActionRowComponentBuilder,
 } from 'discord.js';
 import { Discord, Slash } from 'discordx';
+import { log } from '../lib/index.js';
 
 @Discord()
 export class Pat {
-  @Slash({ name: 'leaderboard', description: 'Get the server\'s leaderboard' })
+  @Slash({ name: 'leaderboard', description: "Get the server's leaderboard" })
   async send(
     interaction: ChatInputCommandInteraction
   ): Promise<InteractionResponse<boolean>> {
@@ -20,6 +21,11 @@ export class Pat {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
         ephemeral: true,
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const row =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(

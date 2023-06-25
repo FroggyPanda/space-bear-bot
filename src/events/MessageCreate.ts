@@ -3,6 +3,7 @@ import type { ArgsOf } from 'discordx';
 import { Discord, On } from 'discordx';
 import { getMember, getGuild } from '../lib/supabaseHelpers.js';
 import { CacheMember, cache } from '../main.js';
+import { log } from '../lib/index.js';
 
 const setXpAndLevel = (member: CacheMember) => {
   let xp = member.xp + Math.floor(Math.random() * 6) + 15;
@@ -21,6 +22,11 @@ const setXpAndLevel = (member: CacheMember) => {
 const Level = async (message: Message): Promise<void> => {
   if (!message.guild) return;
   if (message.author.bot) return;
+
+  log(
+    'INFO',
+    `Server ID ${message.guild.id}: User ID ${message.author.id} sent a message in a permited channel`
+  );
 
   const messageCreatedTimestamp = message.createdTimestamp;
 

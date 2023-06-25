@@ -5,10 +5,10 @@ import { IntentsBitField } from 'discord.js';
 import { Client, MetadataStorage } from 'discordx';
 import { config } from 'dotenv';
 import { Database } from 'schema.js';
-import Log from './decorators/Log.js';
 import chalk from 'chalk';
 import boxen from 'boxen';
 import NodeCache from 'node-cache';
+import { log } from './lib/index.js';
 
 export type CacheMember = {
   id: number;
@@ -18,7 +18,7 @@ export type CacheMember = {
   last_message_timestamp: number;
 };
 
-process.on('SIGINT', () => {
+function sendToSupabase() {
   cache.keys().forEach(async (key: string) => {
     const value = cache.get<CacheMember>(key);
     const tableName = key.split(':')[0];
@@ -35,11 +35,18 @@ process.on('SIGINT', () => {
           })
           .eq('id', value.id);
 
-        if (result.error)
+        if (result.error) {
+          log('ERROR', `Error updating Supabase from cache:\n${result}`);
+
           throw new Error(`Error updating Supabase from cache:\n${result}`);
+        }
       }
     }
   });
+}
+
+process.on('SIGINT', () => {
+  sendToSupabase();
 });
 
 process.on('uncaughtException', (error) => {
@@ -50,27 +57,7 @@ process.on('uncaughtException', (error) => {
     `${bot.user?.username} has experienced a bug\n \`\`\`${error}\`\`\``
   );
 
-  cache.keys().forEach(async (key: string) => {
-    const value = cache.get<CacheMember>(key);
-    const tableName = key.split(':')[0];
-
-    if (tableName === 'member') {
-      if (value) {
-        const result = await supabase
-          .from('member')
-          .update({
-            message: value.message,
-            xp: value.xp,
-            level: value.level,
-            last_message_timestamp: value.last_message_timestamp,
-          })
-          .eq('id', value.id);
-
-        if (result.error)
-          throw new Error(`Error updating Supabase from cache:\n${result}`);
-      }
-    }
-  });
+  sendToSupabase();
 });
 
 config();
@@ -105,8 +92,11 @@ cache.on('del', async (key: string, value: CacheMember) => {
       })
       .eq('id', value.id);
 
-    if (result.error)
+    if (result.error) {
+      log('ERROR', `Error updating Supabase from cache:\n${result}`);
+
       throw new Error(`Error updating Supabase from cache:\n${result}`);
+    }
   }
 });
 
@@ -120,7 +110,6 @@ export const bot = new Client({
     IntentsBitField.Flags.MessageContent,
   ],
   silent: false, // Debug logs are disabled in silent mode
-  guards: [Log], // Default guard on each command
 });
 
 bot.once('ready', async () => {

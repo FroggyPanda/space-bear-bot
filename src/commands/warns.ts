@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import { Discord, Slash, SlashOption } from 'discordx';
 import { supabase } from '../main.js';
-import { getGuild, isMod, modLog } from '../lib/index.js';
+import { getGuild, isMod, modLog, log } from '../lib/index.js';
 
 @Discord()
 export class Warn {
@@ -39,6 +39,11 @@ export class Warn {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -108,6 +113,11 @@ export class Warn {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -186,6 +196,11 @@ export class Warn {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
+
     const guild = await getGuild(interaction.guild.id);
 
     if (!(await isMod(interaction, guild)))
@@ -251,6 +266,11 @@ export class Warn {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 

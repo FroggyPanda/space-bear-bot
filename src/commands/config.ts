@@ -14,7 +14,7 @@ import {
   YellowEmbed,
   BlueEmbed,
 } from '../components/embeds.js';
-import { getGuild, setGuild, isMod, modLog } from '../lib/index.js';
+import { getGuild, setGuild, isMod, modLog, log } from '../lib/index.js';
 
 @Discord()
 @SlashGroup({ name: 'config', description: 'Config for the bot' })
@@ -42,6 +42,11 @@ export class Config {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -89,6 +94,11 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
+
     const guild = await getGuild(interaction.guild.id);
 
     if (!(await isMod(interaction, guild)))
@@ -134,6 +144,11 @@ export class Config {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -185,6 +200,11 @@ export class Config {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -274,6 +294,11 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
+
     const guild = await getGuild(interaction.guild.id);
 
     if (!(await isMod(interaction, guild)))
@@ -325,6 +350,11 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
         ephemeral: true,
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 
@@ -380,6 +410,11 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
+
     const guild = await getGuild(interaction.guild.id);
 
     if (!(await isMod(interaction, guild)))
@@ -424,6 +459,11 @@ export class Config {
       return interaction.editReply({
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const guild = await getGuild(interaction.guild.id);
 

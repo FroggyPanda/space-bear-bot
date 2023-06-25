@@ -14,6 +14,7 @@ import {
 } from '../lib/supabaseHelpers.js';
 import { Discord, Slash } from 'discordx';
 import { RedEmbed, YellowEmbed } from '../components/embeds.js';
+import { log } from '../lib/index.js';
 
 @Discord()
 export class Pat {
@@ -22,6 +23,11 @@ export class Pat {
     embed: EmbedBuilder
   ): Promise<Pagination<PaginationResolver<Resolver>> | null> {
     if (!interaction.guild) return null;
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
 
     const users = await supabase
       .from('member')
