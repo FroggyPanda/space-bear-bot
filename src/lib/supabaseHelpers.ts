@@ -1,4 +1,4 @@
-import { Member, Server } from '../schema.js';
+import { Member, Guild } from '../schema.js';
 import { supabase } from '../main.js';
 
 export async function getMember(
@@ -8,7 +8,7 @@ export async function getMember(
   const result = await supabase
     .from('member')
     .select()
-    .eq('server_id', guild_id)
+    .eq('guild_id', guild_id)
     .eq('member_id', member_id)
     .limit(1);
 
@@ -18,7 +18,7 @@ export async function getMember(
   if (result.data.length < 1) {
     const newMember = await supabase
       .from('member')
-      .insert({ server_id: guild_id, member_id: member_id })
+      .insert({ guild_id: guild_id, member_id: member_id })
       .select();
 
     if (newMember.error)
@@ -30,26 +30,26 @@ export async function getMember(
   return result.data[0];
 }
 
-export async function getServer(guild_id: string): Promise<Server> {
+export async function getGuild(guild_id: string): Promise<Guild> {
   const result = await supabase
-    .from('server')
+    .from('guild')
     .select()
-    .eq('server_id', guild_id)
+    .eq('guild_id', guild_id)
     .limit(1);
 
   if (result.error)
-    throw new Error(`Error fetching server from Supabase:\n ${result}`);
+    throw new Error(`Error fetching guild from Supabase:\n ${result}`);
 
   if (result.data.length < 1) {
-    const newServer = await supabase
-      .from('server')
-      .insert({ server_id: guild_id })
+    const newGuild = await supabase
+      .from('guild')
+      .insert({ guild_id: guild_id })
       .select();
 
-    if (newServer.error)
-      throw new Error(`Error inserting server from Supabase:\n ${newServer}`);
+    if (newGuild.error)
+      throw new Error(`Error inserting guild from Supabase:\n ${newGuild}`);
 
-    return newServer.data[0];
+    return newGuild.data[0];
   }
 
   return result.data[0];
@@ -63,19 +63,19 @@ export async function setMember(
   const update = await supabase
     .from('member')
     .update(data)
-    .eq('server_id', guild_id)
+    .eq('guild_id', guild_id)
     .eq('member_id', member_id);
 
   if (update.error)
     throw new Error(`Error updating Member in Supabase:\n ${update}`);
 }
 
-export async function setServer(guild_id: string, data: Server) {
+export async function setGuild(guild_id: string, data: Guild) {
   const update = await supabase
-    .from('server')
+    .from('guild')
     .update(data)
-    .eq('server_id', guild_id);
+    .eq('guild_id', guild_id);
 
   if (update.error)
-    throw new Error(`Error updating Server in Supabase:\n ${update}`);
+    throw new Error(`Error updating guild in Supabase:\n ${update}`);
 }

@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import { Discord, Slash, SlashOption } from 'discordx';
 import { supabase } from '../main.js';
-import { getServer, isMod, modLog } from '../lib/index.js';
+import { getGuild, isMod, modLog } from '../lib/index.js';
 
 @Discord()
 export class Warn {
@@ -40,9 +40,9 @@ export class Warn {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
@@ -51,7 +51,7 @@ export class Warn {
       .from('warning')
       .insert({
         member_id: user.user.id,
-        server_id: interaction.guild.id,
+        guild_id: interaction.guild.id,
         mod_id: interaction.user.id,
         timestamp: interaction.createdTimestamp,
         reason: reason,
@@ -79,7 +79,7 @@ export class Warn {
         footer: { text: `id: ${thisWarn.data[0].id}` },
       }),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -109,9 +109,9 @@ export class Warn {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
@@ -120,7 +120,7 @@ export class Warn {
       .from('warning')
       .select()
       .eq('member_id', user.user.id)
-      .eq('server_id', interaction.guild.id);
+      .eq('guild_id', interaction.guild.id);
 
     if (thisWarns.error) {
       console.error('warns.ts 87 thisWarns.error:\n', thisWarns.error);
@@ -186,9 +186,9 @@ export class Warn {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
@@ -219,7 +219,7 @@ export class Warn {
         footer: { text: `id: ${del.data[0].id}` },
       }),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -252,9 +252,9 @@ export class Warn {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
@@ -263,7 +263,7 @@ export class Warn {
       .from('warning')
       .delete()
       .eq('member_id', user.user.id)
-      .eq('server_id', interaction.guild.id)
+      .eq('guild_id', interaction.guild.id)
       .select();
 
     if (thisWarns.error) {
@@ -286,7 +286,7 @@ export class Warn {
     modLog(
       BlueEmbed(`${interaction.user} cleared all of ${user}s warnings`),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({

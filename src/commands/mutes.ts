@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 import { Discord, Slash, SlashOption } from 'discordx';
 
-import { getServer, userRoles, isMod, modLog } from '../lib/index.js';
+import { getGuild, userRoles, isMod, modLog } from '../lib/index.js';
 
 @Discord()
 export class Mute {
@@ -47,10 +47,9 @@ export class Mute {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
-    const usersRoles = await userRoles(interaction);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
@@ -80,7 +79,7 @@ export class Mute {
           `${interaction.user} muted ${user} for 28d\nReason: ${reason}`
         ),
         interaction,
-        server
+        guild
       );
 
       interaction.client.users.send(user.id, {
@@ -148,7 +147,7 @@ export class Mute {
         `${interaction.user} muted ${user} for ${duration}\nReason: ${reason}`
       ),
       interaction,
-      server
+      guild
     );
 
     interaction.client.users.send(user.id, {
@@ -196,7 +195,7 @@ export class Mute {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
     const usersRoles = await userRoles(interaction);
 
     if (!usersRoles)
@@ -204,7 +203,7 @@ export class Mute {
         embeds: [RedEmbed('An error has occurred')],
       });
 
-    const isMod = usersRoles.find((v) => v === server.mod_id);
+    const isMod = usersRoles.find((v) => v === guild.mod_id);
 
     if (isMod === undefined)
       return interaction.editReply({
@@ -223,7 +222,7 @@ export class Mute {
     modLog(
       BlueEmbed(`${interaction.user} unmuted ${user}\nReason: ${reason}`),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({

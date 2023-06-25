@@ -1,7 +1,7 @@
 import { Message, TextChannel } from 'discord.js';
 import type { ArgsOf } from 'discordx';
 import { Discord, On } from 'discordx';
-import { getMember, getServer } from '../lib/supabaseHelpers.js';
+import { getMember, getGuild } from '../lib/supabaseHelpers.js';
 import { CacheMember, cache } from '../main.js';
 
 const setXpAndLevel = (member: CacheMember) => {
@@ -49,11 +49,11 @@ const Level = async (message: Message): Promise<void> => {
     return;
   }
 
-  const server = await getServer(message.guild.id);
+  const guild = await getGuild(message.guild.id);
 
-  if (!server) return;
+  if (!guild) return;
 
-  if (!server.level_message_channels.find((v) => v === message.channel.id))
+  if (!guild.level_message_channels.find((v) => v === message.channel.id))
     return;
 
   const XLU = setXpAndLevel(memberData);
@@ -63,9 +63,9 @@ const Level = async (message: Message): Promise<void> => {
   memberData.last_message_timestamp = messageCreatedTimestamp;
   memberData.message++;
 
-  if (XLU.up && server.level_message_channel) {
+  if (XLU.up && guild.level_message_channel) {
     const channel = await message.client.channels.fetch(
-      server.level_message_channel
+      guild.level_message_channel
     );
     if (channel) {
       const levelMessages = [
@@ -89,7 +89,7 @@ const Level = async (message: Message): Promise<void> => {
       );
 
       if (message.member) {
-        const role = server.level_ranks.find(
+        const role = guild.level_ranks.find(
           (v) => v.level === memberData?.level
         );
 

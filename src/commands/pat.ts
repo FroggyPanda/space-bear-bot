@@ -8,9 +8,9 @@ import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { supabase } from '../main.js';
 import {
   getMember,
-  getServer,
+  getGuild,
   setMember,
-  setServer,
+  setGuild,
 } from '../lib/supabaseHelpers.js';
 import { Discord, Slash } from 'discordx';
 import { RedEmbed, YellowEmbed } from '../components/embeds.js';
@@ -26,7 +26,7 @@ export class Pat {
     const users = await supabase
       .from('member')
       .select()
-      .eq('server_id', interaction.guild.id)
+      .eq('guild_id', interaction.guild.id)
       .gte('pat', 1);
 
     if (users.error) {
@@ -88,21 +88,18 @@ export class Pat {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const supaMember = await getMember(
-      interaction.guild.id,
-      interaction.user.id
-    );
-    const supaServer = await getServer(interaction.guild.id);
+    const member = await getMember(interaction.guild.id, interaction.user.id);
+    const guild = await getGuild(interaction.guild.id);
 
     if (
       interaction.createdTimestamp <
-      supaMember.last_pat_timestamp + 24 * 60 * 60 * 1000
+      member.last_pat_timestamp + 24 * 60 * 60 * 1000
     ) {
       const pagination = await this.makePages(
         interaction,
         YellowEmbed(
           `You've already pat Space Bear today. You can pat Space Bear again on <t:${Math.floor(
-            (supaMember.last_pat_timestamp + 24 * 60 * 60 * 1000) / 1000
+            (member.last_pat_timestamp + 24 * 60 * 60 * 1000) / 1000
           )}:F>`
         )
       );
@@ -116,21 +113,21 @@ export class Pat {
       return await pagination.send();
     }
 
-    supaMember.pat++;
-    supaServer.pat++;
-    supaMember.last_pat_timestamp = interaction.createdTimestamp;
+    member.pat++;
+    guild.pat++;
+    member.last_pat_timestamp = interaction.createdTimestamp;
 
-    setMember(interaction.guild.id, interaction.user.id, supaMember);
-    setServer(interaction.guild.id, supaServer);
+    setMember(interaction.guild.id, interaction.user.id, member);
+    setGuild(interaction.guild.id, guild);
 
     const embed = new EmbedBuilder()
       .setTitle('He is very happy')
       .setDescription(
-        `You have pat Space Bear ${supaMember.pat} ${
-          supaMember.pat > 1 ? 'times' : 'time'
+        `You have pat Space Bear ${member.pat} ${
+          member.pat > 1 ? 'times' : 'time'
         }
-        \n${interaction.guild.name} has pat Space Bear ${supaServer.pat} ${
-          supaServer.pat > 1 ? 'times' : 'time'
+        \n${interaction.guild.name} has pat Space Bear ${guild.pat} ${
+          guild.pat > 1 ? 'times' : 'time'
         }
         \nYou can pat Space Bear again on <t:${Math.floor(
           (interaction.createdTimestamp + 24 * 60 * 60 * 1000) / 1000

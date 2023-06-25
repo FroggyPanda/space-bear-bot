@@ -14,7 +14,7 @@ import {
   YellowEmbed,
   BlueEmbed,
 } from '../components/embeds.js';
-import { getServer, setServer, isMod, modLog } from '../lib/index.js';
+import { getGuild, setGuild, isMod, modLog } from '../lib/index.js';
 
 @Discord()
 @SlashGroup({ name: 'config', description: 'Config for the bot' })
@@ -43,21 +43,21 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    server.mod_id = role.id;
+    guild.mod_id = role.id;
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(`<@${interaction.user.id}> set the moderation role to ${role}`),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -89,23 +89,23 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    server.mod_log_channel = channel.id;
+    guild.mod_log_channel = channel.id;
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(
         `${interaction.user} set the moderation logs channel to ${channel}`
       ),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -135,28 +135,28 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    if (server.level_message_channels.find((v) => v === channel.id))
+    if (guild.level_message_channels.find((v) => v === channel.id))
       return interaction.editReply({
         embeds: [YellowEmbed('Channel is already added')],
       });
 
-    server.level_message_channels.push(channel.id);
+    guild.level_message_channels.push(channel.id);
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(
         `${interaction.user} added ${channel} to the possible channels members can level up from`
       ),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -186,25 +186,25 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    server.level_message_channels = server.level_message_channels.filter(
+    guild.level_message_channels = guild.level_message_channels.filter(
       (v) => v !== channel.id
     );
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(
         `${interaction.user} removed ${channel} to the possible channels members can level up from`
       ),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -227,19 +227,19 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    if (server.level_message_channels.length < 1)
+    if (guild.level_message_channels.length < 1)
       return interaction.editReply({
         embeds: [RedEmbed('There are no channels')],
       });
 
-    const channels = server.level_message_channels
+    const channels = guild.level_message_channels
       .map((v) => `<#${v}>`)
       .join('\n');
 
@@ -274,23 +274,23 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    server.level_message_channel = channel.id;
+    guild.level_message_channel = channel.id;
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(
         `${interaction.user} set the level message log channel to ${channel}`
       ),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -326,30 +326,30 @@ export class Config {
         ephemeral: true,
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.reply({
         embeds: [RedEmbed('You are not a mod.')],
         ephemeral: true,
       });
 
-    if (server.level_ranks.find((v) => v.role_id === role.id)) {
+    if (guild.level_ranks.find((v) => v.role_id === role.id)) {
       return interaction.reply({
         embeds: [YellowEmbed('Role is already added')],
         ephemeral: true,
       });
     }
-    server.level_ranks.push({ role_id: role.id, level: level });
+    guild.level_ranks.push({ role_id: role.id, level: level });
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(
         `${interaction.user} set ${role} to be gained at level \`${level}\``
       ),
       interaction,
-      server
+      guild
     );
 
     return interaction.reply({
@@ -380,31 +380,29 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!(await isMod(interaction, server)))
+    if (!(await isMod(interaction, guild)))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    const old = server.level_ranks;
-    server.level_ranks = server.level_ranks.filter(
-      (v) => v.role_id !== role.id
-    );
+    const old = guild.level_ranks;
+    guild.level_ranks = guild.level_ranks.filter((v) => v.role_id !== role.id);
 
-    if (JSON.stringify(old) === JSON.stringify(server.level_ranks))
+    if (JSON.stringify(old) === JSON.stringify(guild.level_ranks))
       return interaction.editReply({
         embeds: [YellowEmbed('Role not found in list')],
       });
 
-    setServer(interaction.guild.id, server);
+    setGuild(interaction.guild.id, guild);
 
     modLog(
       BlueEmbed(
         `${interaction.user} removed ${role} to be gained as a message level reward`
       ),
       interaction,
-      server
+      guild
     );
 
     return interaction.editReply({
@@ -427,19 +425,19 @@ export class Config {
         embeds: [RedEmbed('You cannot use this command in non-servers')],
       });
 
-    const server = await getServer(interaction.guild.id);
+    const guild = await getGuild(interaction.guild.id);
 
-    if (!isMod(interaction, server))
+    if (!isMod(interaction, guild))
       return interaction.editReply({
         embeds: [RedEmbed('You are not a mod.')],
       });
 
-    if (server.level_ranks.length < 1)
+    if (guild.level_ranks.length < 1)
       return interaction.editReply({
         embeds: [RedEmbed('There are no roles')],
       });
 
-    const ranks = server.level_ranks
+    const ranks = guild.level_ranks
       .map((v) => `<@&${v.role_id}> at level ${v.level}`)
       .join('\n');
 

@@ -1,10 +1,10 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import { Server } from 'schema';
+import { Guild } from 'schema';
 import { userRoles } from './userRoles.js';
 
 export async function isMod(
   interaction: ChatInputCommandInteraction,
-  server: Server
+  guild: Guild
 ): Promise<boolean> {
   const userRole = await userRoles(interaction);
 
@@ -28,7 +28,7 @@ export async function isMod(
     interaction.memberPermissions?.has('ManageRoles') ||
     interaction.memberPermissions?.has('ManageThreads') ||
     interaction.memberPermissions?.has('ManageWebhooks') ||
-    userRole.find((v) => v === server.mod_id)
+    userRole.find((v) => v === guild.mod_id)
   )
     return true;
 
