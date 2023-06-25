@@ -13,7 +13,13 @@ export async function getMember(
     .limit(1);
 
   if (result.error)
-    throw new Error(`Error fetching member from Supabase:\n ${result}`);
+    throw new Error(
+      `Error fetching member from Supabase:\n ${JSON.stringify(
+        result,
+        null,
+        4
+      )}`
+    );
 
   if (result.data.length < 1) {
     const newMember = await supabase
@@ -22,7 +28,13 @@ export async function getMember(
       .select();
 
     if (newMember.error)
-      throw new Error(`Error inserting memeber from Supabase:\n ${newMember}`);
+      throw new Error(
+        `Error inserting memeber from Supabase:\n ${JSON.stringify(
+          newMember,
+          null,
+          4
+        )}`
+      );
 
     return newMember.data[0];
   }
@@ -38,7 +50,9 @@ export async function getGuild(guild_id: string): Promise<Guild> {
     .limit(1);
 
   if (result.error)
-    throw new Error(`Error fetching guild from Supabase:\n ${result}`);
+    throw new Error(
+      `Error fetching guild from Supabase:\n ${JSON.stringify(result, null, 4)}`
+    );
 
   if (result.data.length < 1) {
     const newGuild = await supabase
@@ -47,7 +61,13 @@ export async function getGuild(guild_id: string): Promise<Guild> {
       .select();
 
     if (newGuild.error)
-      throw new Error(`Error inserting guild from Supabase:\n ${newGuild}`);
+      throw new Error(
+        `Error inserting guild from Supabase:\n ${JSON.stringify(
+          newGuild,
+          null,
+          4
+        )}`
+      );
 
     return newGuild.data[0];
   }
@@ -67,7 +87,9 @@ export async function setMember(
     .eq('member_id', member_id);
 
   if (update.error)
-    throw new Error(`Error updating Member in Supabase:\n ${update}`);
+    throw new Error(
+      `Error updating Member in Supabase:\n ${JSON.stringify(update, null, 4)}`
+    );
 }
 
 export async function setGuild(guild_id: string, data: Guild) {
@@ -77,5 +99,7 @@ export async function setGuild(guild_id: string, data: Guild) {
     .eq('guild_id', guild_id);
 
   if (update.error)
-    throw new Error(`Error updating guild in Supabase:\n ${update}`);
+    throw new Error(
+      `Error updating guild in Supabase:\n ${JSON.stringify(update, null, 4)}`
+    );
 }
