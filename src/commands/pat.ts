@@ -57,7 +57,7 @@ export class Pat {
               : i + j + 1 === 3
               ? '🥉 '
               : `\`${i + j + 1}\`: `
-          }${user.username} - ${v.pat}`;
+          }${user} - ${v.pat}`;
         })
       );
 
