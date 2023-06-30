@@ -97,16 +97,20 @@ export class Pat {
     const member = await getMember(interaction.guild.id, interaction.user.id);
     const guild = await getGuild(interaction.guild.id);
 
+    const currentDate = new Date(interaction.createdTimestamp);
+    const lastDate = new Date(member.last_pat_timestamp);
+
     if (
-      interaction.createdTimestamp <
-      member.last_pat_timestamp + 24 * 60 * 60 * 1000
+      lastDate.getUTCDate() === currentDate.getUTCDate() &&
+      lastDate.getUTCMonth() === currentDate.getUTCMonth() &&
+      lastDate.getUTCFullYear() === currentDate.getUTCFullYear()
     ) {
       const pagination = await this.makePages(
         interaction,
         YellowEmbed(
           `You've already pat Space Bear today. You can pat Space Bear again on <t:${Math.floor(
             (member.last_pat_timestamp + 24 * 60 * 60 * 1000) / 1000
-          )}:F>`
+          )}:D>`
         )
       );
 
