@@ -141,7 +141,7 @@ export class Pat {
         }
         \nYou can pat Space Bear again on <t:${Math.floor(
           (interaction.createdTimestamp + 24 * 60 * 60 * 1000) / 1000
-        )}:F>`
+        )}:D>`
       )
       .setImage('https://media.tenor.com/KyGPQuYCdYkAAAAC/pat-garrys-mod.gif');
 
