@@ -2,10 +2,11 @@ import { Message, TextChannel } from 'discord.js';
 import type { ArgsOf } from 'discordx';
 import { Discord, On } from 'discordx';
 import { getMember, getGuild } from '../lib/supabaseHelpers.js';
-import { CacheMember, cache } from '../main.js';
+import { supabase } from '../main.js';
 import { log } from '../lib/index.js';
+import type { Member } from 'schema.js';
 
-const setXpAndLevel = (member: CacheMember) => {
+const setXpAndLevel = (member: Member) => {
   let xp = member.xp + Math.floor(Math.random() * 6) + 15;
   let level = member.level;
   let up = false;
@@ -30,28 +31,23 @@ const Level = async (message: Message): Promise<void> => {
 
   const messageCreatedTimestamp = message.createdTimestamp;
 
-  let memberData = cache.get<CacheMember>(
-    `member:${message.guild.id}/${message.author.id}`
-  );
+  let memberData = await getMember(message.guild.id, message.author.id);
 
-  if (!memberData) {
-    const temp = await getMember(message.guild.id, message.author.id);
-    memberData = {
-      id: temp.id,
-      message: temp.message,
-      xp: temp.xp,
-      level: temp.level,
-      last_message_timestamp: temp.last_message_timestamp,
-    };
-  }
-
-  if (!memberData) return;
   if (
     messageCreatedTimestamp <=
     memberData.last_message_timestamp + 2 * 60 * 1000
   ) {
     memberData.message++;
-    cache.set(`member:${message.guild.id}/${message.author.id}`, memberData);
+    const result = await supabase
+      .from('member')
+      .update(memberData)
+      .eq('id', memberData.id);
+
+    if (result.error) {
+      log('ERROR', `Error updating member from Message Create:\n${result}`);
+      throw new Error(`Error updating member from Message Create:\n${result}`);
+    }
+
     return;
   }
 
@@ -106,7 +102,15 @@ const Level = async (message: Message): Promise<void> => {
     }
   }
 
-  cache.set(`member:${message.guild.id}/${message.author.id}`, memberData);
+  const result = await supabase
+    .from('member')
+    .update(memberData)
+    .eq('id', memberData.id);
+
+  if (result.error) {
+    log('ERROR', `Error updating member from Message Create:\n${result}`);
+    throw new Error(`Error updating member from Message Create:\n${result}`);
+  }
 };
 
 @Discord()
