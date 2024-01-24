@@ -1,11 +1,14 @@
 import {
   ApplicationCommandOptionType,
+  type CategoryChannelResolvable,
+  ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   InteractionResponse,
   Message,
   Role,
   TextChannel,
+  VoiceChannel,
 } from 'discord.js';
 import { Discord, Slash, SlashGroup, SlashOption } from 'discordx';
 import {
@@ -484,5 +487,66 @@ export class Config {
     const embed = new EmbedBuilder().setTitle('Ranks:').setDescription(ranks);
 
     return interaction.editReply({ embeds: [embed] });
+  }
+
+  @Slash({
+    name: 'temporary',
+    description: 'Where do temporary voice channels get placed',
+  })
+  @SlashGroup('config')
+  async temporary(
+    @SlashOption({
+      name: 'category',
+      description:
+        'ID of the category to place the channels (right click the channel and select copy id)',
+      required: true,
+      type: ApplicationCommandOptionType.String,
+    })
+    categoryId: string,
+    interaction: ChatInputCommandInteraction
+  ) {
+    await interaction.deferReply({ ephemeral: true });
+
+    if (!interaction.guild)
+      return interaction.editReply({
+        embeds: [RedEmbed('You cannot use this command in non-servers')],
+      });
+
+    log(
+      'INFO',
+      `Server ID ${interaction.guild.id}: User ID ${interaction.user.id} ran command ${interaction.commandName}`
+    );
+
+    try {
+      const channel = await interaction.guild.channels.create({
+        name: 'temp',
+        type: ChannelType.GuildVoice,
+        parent: categoryId as CategoryChannelResolvable,
+      });
+
+      (channel as VoiceChannel).delete();
+
+      const guild = await getGuild(interaction.guild.id);
+      guild.temporary_channel_category = categoryId;
+
+      const category = await interaction.guild.channels.fetch(categoryId);
+
+      setGuild(interaction.guild.id, guild);
+      modLog(
+        BlueEmbed(
+          `Temporary channel categories have been set to ${category?.name}`
+        ),
+        interaction,
+        guild
+      );
+
+      return interaction.editReply({
+        embeds: [GreenEmbed(`Temporary channel category set up`)],
+      });
+    } catch (error) {
+      return interaction.editReply({
+        embeds: [RedEmbed(`Invalid category ID`)],
+      });
+    }
   }
 }
